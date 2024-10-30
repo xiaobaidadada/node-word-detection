@@ -1,0 +1,6 @@
+/build/
+/cmake-build-debug/
+/node_modules/
+/.idea/
+/dist/
+/package-lock.json

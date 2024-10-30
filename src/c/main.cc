@@ -1,0 +1,79 @@
+#include "sensitive_struct.h"
+#include <node_api.h>
+#include <napi.h>
+
+extern p_sensitive_word_node root ;
+
+wchar_t* ConvertNapiStringToWCHAR(const Napi::String& napiStr) {
+    // 获取 UTF-8 字符串
+    std::string utf8Str = napiStr.Utf8Value();
+
+    // 计算宽字符所需的缓冲区大小
+    size_t size = mbstowcs(NULL, utf8Str.c_str(), 0);
+    if (size == (size_t)-1) {
+        return nullptr; // 错误处理
+    }
+
+    // 分配缓冲区
+    wchar_t* wideStr = new wchar_t[size + 1]; // +1 以放置结束符
+
+    // 转换为宽字符
+    mbstowcs(wideStr, utf8Str.c_str(), size + 1);
+
+    return wideStr;
+}
+
+void add_word(const Napi::CallbackInfo &info) {
+    // 全局对象
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+    Napi::String word = info[0].As<Napi::String>();
+    add_sensitive_word(ConvertNapiStringToWCHAR(word));
+
+}
+
+Napi::Boolean check_word(const Napi::CallbackInfo &info) {
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+    Napi::String word = info[0].As<Napi::String>();
+    auto str = ConvertNapiStringToWCHAR(word);
+    auto r = check_sensitive_word(str);
+    return Napi::Boolean::New(env, r);
+//     Napi::Promise::Deferred deferred = Napi::Promise::Deferred::New(env);
+//     Napi::ThreadSafeFunction tsfn = Napi::ThreadSafeFunction::New(
+//             env,
+//             deferred.Promise(),  // 传递参数，子线程需要
+//             "ChildThread",                  // 线程名字
+//             0,                              // 从子线程发送到主线程的数据项队列的最大值，0是没有限制
+//             1                              // 最大线程数量，当有这么多个线程调用Release函数后，就会释放了
+//     );
+//     std::thread thread([]() {
+//             // env无法使用
+//             // 子线程执行
+//
+//     });
+//     // 不等待子线程结束
+//     thread.detach();
+
+}
+
+Napi::Object Init(Napi::Env env, Napi::Object exports) {
+    // 初始化根节点
+    root = (p_sensitive_word_node) malloc(sizeof (sensitive_word_node));
+    create_children(root,first_children_length);
+    root->children_num = 0;
+    // 设置函数
+    exports.Set(Napi::String::New(env, "add_word"),
+                Napi::Function::New(env, add_word));
+    exports.Set(Napi::String::New(env, "check_word"),
+                Napi::Function::New(env, check_word));
+    return exports;
+}
+
+// 模块的入口点，node addon 就是写模块的
+// 名字 初始化函数
+NODE_API_MODULE(get_process, Init)
+
+
+
+
