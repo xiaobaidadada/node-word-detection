@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cwctype>
 #include "sensitive_struct.h"
-#include <comdef.h> // wchar* 转到 char*
+
 
 // 违禁词数量
 long word_num = 0;
