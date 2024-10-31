@@ -30,5 +30,9 @@
         'NOMINMAX'
       ]
     }]
-  ]
+  ],
+  # node16 打包会出现的问题
+  'variables' : {
+      'openssl_fips': '',
+  }
 }
