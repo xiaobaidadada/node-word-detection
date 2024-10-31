@@ -1,21 +1,20 @@
 {
-  "name": "word-detection",
+  "name": "node-word-detection",
   "version": "1.0.1",
   "description": "sensitive word detection",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git@github.com:xiaobaidadada/word-detection.git"
+    "url": "git@github.com:xiaobaidadada/node-word-detection.git"
   },
   "scripts": {
-    "install1": "prebuild-install --verbose || node-gyp rebuild --release",
+    "install": "prebuild-install --verbose || node-gyp rebuild --release",
     "cc-rebuild": " node-gyp rebuild",
     "cc-configure": "node-gyp configure",
-    "go": "npm run cc-configure && node-gyp build ",
-    "test" : "node src/index.js"
+    "go": "npm run cc-configure && node-gyp build "
   },
-  "keywords": ["process","sysinfo","windwos","linux","monitor","monitoring","cpu","process cpu","real time","watcher"],
+  "keywords": ["sensitive","word","敏感词","filter","sensitive word","字典查找"],
   "author": "xiaobaidadada",
   "license": "Apache-2.0",
   "dependencies": {
