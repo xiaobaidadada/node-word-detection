@@ -4,19 +4,19 @@
 
 extern p_sensitive_word_node root ;
 
-wchar_t* ConvertNapiStringToWCHAR(const Napi::String& napiStr) {
+wchar_t* ConvertNapiStringToWchar(const Napi::String& napiString) {
     // 获取 UTF-8 字符串
-    std::string utf8Str = napiStr.Utf8Value();
-    // 计算宽字符所需的缓冲区大小
-    size_t size = mbstowcs(NULL, utf8Str.c_str(), 0);
-    if (size == (size_t)-1) {
-        return nullptr; // 错误处理
-    }
-    // 分配缓冲区
-    wchar_t* wideStr = new wchar_t[size + 1]; // +1 以放置结束符
-    // 转换为宽字符
-    mbstowcs(wideStr, utf8Str.c_str(), size + 1);
-    return wideStr;
+    std::string utf8String = napiString.Utf8Value();
+
+    // 将 UTF-8 字符串转换为 std::wstring
+    std::wstring wideString(utf8String.begin(), utf8String.end());
+
+    // 分配内存
+    wchar_t* wideCharStr = new wchar_t[wideString.size() + 1]; // +1 for null terminator
+    std::copy(wideString.begin(), wideString.end(), wideCharStr);
+    wideCharStr[wideString.size()] = L'\0'; // 添加结束符
+
+    return wideCharStr;
 }
 
 void add_word(const Napi::CallbackInfo &info) {
@@ -24,7 +24,7 @@ void add_word(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
     Napi::String word = info[0].As<Napi::String>();
-    auto str = ConvertNapiStringToWCHAR(word);
+    auto str = ConvertNapiStringToWchar(word);
     add_sensitive_word(str);
     delete [] str;
 }
@@ -33,7 +33,7 @@ Napi::Boolean check_word(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
     Napi::String word = info[0].As<Napi::String>();
-    auto str = ConvertNapiStringToWCHAR(word);
+    auto str = ConvertNapiStringToWchar(word);
     auto r = check_sensitive_word(str);
     delete [] str;
     return Napi::Boolean::New(env, r);
