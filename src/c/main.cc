@@ -11,14 +11,14 @@
 
 extern p_sensitive_word_node root ;
 
-typedef struct {
-    const wchar_t *  word;
-    Napi::Promise::Deferred deferred;
-} check_param ,* p_check_param;
+// typedef struct {
+//     const wchar_t *  word;
+//     Napi::Promise::Deferred deferred;
+// } check_param ,* p_check_param;
 
-std::queue<check_param> queue;
-std::mutex queueMutex;
-std::condition_variable condition; // 可以堵塞线程的条件变量
+// std::queue<check_param> queue;
+// std::mutex queueMutex;
+// std::condition_variable condition; // 可以堵塞线程的条件变量
 // Napi::ThreadSafeFunction tsfn;
 
 // void consumer() {
@@ -41,11 +41,15 @@ std::condition_variable condition; // 可以堵塞线程的条件变量
 
 const wchar_t * ConvertNapiStringToWCHAR(const Napi::String& napiStr) {
     // 获取 UTF-8 字符串
-    std::string utf8Str = napiStr.Utf8Value();
-    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-    std::wstring wideStr = converter.from_bytes(utf8Str);
-    const  wchar_t* nodename = wideStr.c_str();
-    return nodename;
+    std::string str = napiStr.Utf8Value();
+     // 计算需要的缓冲区大小
+    size_t size = mbstowcs(nullptr, str.c_str(), 0);
+    if (size == (size_t)-1) {
+        throw std::runtime_error("Conversion failed");
+    }
+    std::vector<wchar_t> wideStr(size + 1); // +1 for null terminator
+    mbstowcs(wideStr.data(), str.c_str(), size + 1);
+    return std::wstring(wideStr.data()).c_str();
 }
 
 void add_word(const Napi::CallbackInfo &info) {
