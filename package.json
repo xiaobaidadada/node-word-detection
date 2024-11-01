@@ -12,7 +12,7 @@
     "install": "prebuild-install --verbose || node-gyp rebuild --release ",
     "cc-rebuild": " node-gyp rebuild",
     "cc-configure": "node-gyp configure",
-    "go": "npm run cc-configure && node-gyp build "
+    "go": "node-gyp configure build --debug "
   },
   "keywords": ["sensitive","word","敏感词","filter","sensitive word","字典查找"],
   "author": "xiaobaidadada",
