@@ -87,7 +87,7 @@ void add_sensitive_word(const wchar_t* text)
     now_node->end = true;
 }
 
-bool check_sensitive_word(wchar_t* & text, bool do_replace, wchar_t* replace)
+bool check_sensitive_word(wchar_t* & text, bool do_replace, const wchar_t* replace)
 {
     size_t length = wcslen(text);
     size_t replace_len = wcslen(replace);
