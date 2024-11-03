@@ -1,3 +1,8 @@
+interface check_result {
+    have: boolean;
+    str: string;
+}
+
 export interface node_word_detection {
 
     /**
@@ -13,6 +18,11 @@ export interface node_word_detection {
      * @param text
      */
     check_word: (text: string) => boolean;
+
+    /**
+     * 检测同步替换全部字符串
+     */
+    check_word_replace: (text: string, replace_str: string) => check_result;
 }
 
 export declare const node_word_detection: node_word_detection;

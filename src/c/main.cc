@@ -38,7 +38,25 @@ Napi::Boolean check_word(const Napi::CallbackInfo &info) {
     delete [] str;
     return Napi::Boolean::New(env, r);
 }
-
+Napi::Object check_word_replace(const Napi::CallbackInfo &info) {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+        if (info.Length() != 2 || !info[1].IsString())
+        {
+            Napi::TypeError::New(env, "Please check Params").ThrowAsJavaScriptException();
+        }
+        Napi::String word = info[0].As<Napi::String>();
+        Napi::String replace = info[1].As<Napi::String>();
+        auto str = ConvertNapiStringToWchar(word);
+        auto replace_str = ConvertNapiStringToWchar(replace);
+        auto r = check_sensitive_word(str,true,replace_str);
+        Napi::Object o = Napi::Object::New(env);
+        o.Set("have", r);
+        o.Set("str", Napi::String::New(env, wcharToString(str)));
+        delete [] str;
+        delete [] replace_str;
+        return o;
+}
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     // 初始化根节点
     root = (p_sensitive_word_node) malloc(sizeof (sensitive_word_node));
@@ -49,6 +67,8 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
                 Napi::Function::New(env, add_word));
     exports.Set(Napi::String::New(env, "check_word"),
                 Napi::Function::New(env, check_word));
+    exports.Set(Napi::String::New(env, "check_word_replace"),
+                    Napi::Function::New(env, check_word_replace));
     return exports;
 }
 

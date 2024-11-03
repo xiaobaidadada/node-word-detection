@@ -1,7 +1,7 @@
 {
   "name": "node-word-detection",
-  "version": "1.0.2",
-  "description": "sensitive word detection",
+  "version": "1.0.3",
+  "description": "sensitive word detection 敏感词检测",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "repository": {
