@@ -14,4 +14,4 @@ console.log(node_word_detection.check_word("4s3142"));
 ```
 
 # 说明
-本项目使用了预构建（Node16以上支持），不需要编译而是从github下载编译好的文件，如果你电脑上的网络安装的时候无法访问github则会退化成编译。请安装项目中devDependencies依赖，在windows上编译可能遇到的问题可以参考这个链接https://blog.csdn.net/jjocwc/article/details/134152602
+本项目使用了预构建(支持大部分Node版本最好使用node18以上)，不需要编译而是从github下载编译好的文件，如果你电脑上的网络安装的时候无法访问github则会退化成编译。请安装项目中devDependencies依赖，在windows上编译可能遇到的问题可以参考这个链接https://blog.csdn.net/jjocwc/article/details/134152602

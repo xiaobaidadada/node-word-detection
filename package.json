@@ -1,7 +1,7 @@
 {
   "name": "node-word-detection",
-  "version": "1.0.3",
-  "description": "sensitive word detection 敏感词检测",
+  "version": "1.0.4",
+  "description": "sensitive word detection 敏感词(违禁词)检测与替换",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "repository": {
@@ -14,7 +14,7 @@
     "cc-configure": "node-gyp configure",
     "go": "node-gyp configure build --debug "
   },
-  "keywords": ["sensitive","word","敏感词","filter","sensitive word","字典查找"],
+  "keywords": ["sensitive","word","敏感词","filter","sensitive word","字典查找","违禁词"],
   "author": "xiaobaidadada",
   "license": "Apache-2.0",
   "dependencies": {
