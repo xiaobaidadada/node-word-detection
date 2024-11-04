@@ -1,6 +1,8 @@
 # node-word-detection
 A very memory-efficient lightweight tool for forbidden word detection.
 非常节省内存的轻量级快速违禁词、词典库 检测工具
+# Install
+`npm install node-word-detection`
 # Example
 ```js
 const {node_word_detection} = require("node-word-detection");
