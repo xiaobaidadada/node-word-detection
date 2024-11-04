@@ -37,7 +37,10 @@ wchar_t* new_wstr(const wchar_t* str)
 }
 
 std::string wcharToString(const wchar_t* wstr) {
+    std::wstring ws(wstr);
+    std::string str( ws.begin(), ws.end() );
     // 使用 std::wstring 进行转换
-    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-    return converter.to_bytes(wstr); // 转换为 std::string
+    // std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    // return converter.to_bytes(wstr); // 转换为 std::string
+    return str;
 }
