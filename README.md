@@ -1,6 +1,7 @@
 # node-word-detection
 A very memory-efficient lightweight tool for forbidden word detection.
-非常节省内存的轻量级快速违禁词、词典库 检测工具
+
+非常节省内存的轻量级快速违禁词、词典库 检测工具 、 50万个词大约需要300MB内存、被检测的文本100+字内结果在1毫秒左右。本项目没有提供词库请自己在别的项目下载。
 # Install
 `npm install node-word-detection`
 # Example
@@ -13,6 +14,8 @@ console.log(node_word_detection.check_word("0h781单词123njn"));
 // print true
 console.log(node_word_detection.check_word("4s3142"));
 // print false
+console.log(check_word_replace.check_word("4s3单词1dac142test","***"));
+// print { have: true, str: '4s3***1dac142***' }
 ```
 
 # 说明

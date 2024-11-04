@@ -7,16 +7,10 @@ extern p_sensitive_word_node root ;
 wchar_t* ConvertNapiStringToWchar(const Napi::String& napiString) {
     // 获取 UTF-8 字符串
     std::string utf8String = napiString.Utf8Value();
-
     // 将 UTF-8 字符串转换为 std::wstring
     std::wstring wideString(utf8String.begin(), utf8String.end());
-
-    // 分配内存
-    wchar_t* wideCharStr = new wchar_t[wideString.size() + 1]; // +1 for null terminator
-    std::copy(wideString.begin(), wideString.end(), wideCharStr);
-    wideCharStr[wideString.size()] = L'\0'; // 添加结束符
-
-    return wideCharStr;
+    const wchar_t* wstr = wideString.c_str();
+    return new_wstr(wstr); // wideString周期接收就会变成空
 }
 
 void add_word(const Napi::CallbackInfo &info) {
