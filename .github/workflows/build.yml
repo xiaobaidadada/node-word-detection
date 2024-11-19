@@ -14,7 +14,7 @@ on:
 env: # 用来定义环境变量 可用于工作流中所有作业的步骤的变量的 map
   # See https://github.com/nodejs/release#release-schedule
   # Node.js v16 EOL = 2023-09-11. v21 EOL = 2024-06-01.
-  NODE_BUILD_CMD: npx --no-install prebuild -r node -t  18.0.0 -t 20.0.0 -t 22.0.0 --include-regex 'node-word-detection.node$'
+  NODE_BUILD_CMD: npx --no-install prebuild -r node -t 16.0.0 -t  18.0.0 -t 20.0.0 -t 22.0.0 --include-regex 'node-word-detection.node$'
   # Merge with NODE_BUILD_CMD when Node.js v18 is EOL
   NO_V18_NODE_BUILD_CMD: npx --no-install prebuild -r node -t  20.0.0 -t 22.0.0 --include-regex 'node-word-detection.node$'
   # See https://www.electronjs.org/docs/latest/tutorial/electron-timelines#version-support-policy
