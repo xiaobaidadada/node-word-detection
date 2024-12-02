@@ -1,5 +1,7 @@
 #pragma once
 #include <unordered_map> // 无序map
+#include <vector>
+#include <string>
 #include "../hash/hash_util.h"
 #include "../value/string_util.h"
 
