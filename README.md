@@ -14,7 +14,7 @@ console.log(node_word_detection.check_word("0h781单词123njn"));
 // print true
 console.log(node_word_detection.check_word("4s3142"));
 // print false
-console.log(check_word_replace.check_word_replace("4s3单词1dac142test","***"));
+console.log(node_word_detection.check_word_replace("4s3单词1dac142test","***"));
 // print { have: true, str: '4s3***1dac142***' }
 ```
 
