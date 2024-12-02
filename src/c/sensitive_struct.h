@@ -24,6 +24,9 @@ void add_sensitive_word(const wchar_t* text);
 // 检测并替换违禁词
 bool check_sensitive_word(wchar_t* & text, bool do_replace = false, const wchar_t* replace = L"***");
 
+// 查找并替换违禁词
+void find_word(wchar_t* & text, int num, std::vector<std::wstring> & stringList,bool do_replace = false, const wchar_t* replace = L"***");
+
 // 创建子节点
 sensitive_word_node** create_children(p_sensitive_word_node& node, int size = default_children_length);
 
