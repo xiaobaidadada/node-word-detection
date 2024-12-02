@@ -153,6 +153,89 @@ bool check_sensitive_word(wchar_t* & text, bool do_replace, const wchar_t* repla
     return r;
 }
 
+void find_word(wchar_t* & text, int num, std::vector<std::wstring> & stringList ,bool do_replace , const wchar_t* replace)
+{
+    size_t length = wcslen(text);
+    size_t replace_len = wcslen(replace);
+    p_sensitive_word_node now_node = root;
+    wchar_t* arr = new wchar_t[max_txt+1];  // 动态分配内存
+//     wchar_t arr[max_txt];
+    int arr_len = 0;
+    for (int i = 0; i < length; ++i)
+    {
+        arr_len = 0;
+        wchar_t ch = text[i];
+        arr[arr_len] = ch;
+        arr_len++;
+        // std::wstring result = std::wstring(1, ch); 
+        if (std::iswspace(ch))
+        {
+            continue;
+        }
+        auto it = get_hash_map_word(now_node->children, ch, now_node->children_len);
+        if (it == NULL)
+        {
+            continue;
+        }
+        now_node = it;
+        if (now_node->end)
+        {
+            if (num == -1 || stringList.size() < num)
+            {
+                stringList.push_back(std::wstring(1, ch));
+                if (do_replace)
+                {
+                    auto p = replaceSubstring(text, i, i, replace);
+                    delete [] text;
+                    text = p;
+                    length = wcslen(text);
+                    i += replace_len;
+                }
+            }
+            else
+            {
+                delete[] arr;
+                return ;
+            }
+        }
+        for (int j = i + 1; j < length; j++)
+        {
+            wchar_t ch1 = text[j];
+            arr[arr_len] = ch1;
+            arr_len++;
+            auto it1 = get_hash_map_word(now_node->children, ch1, now_node->children_len);
+            if (it1 == NULL)
+            {
+                break;
+            }
+            now_node = it1;
+            if (now_node->end)
+            {
+                if (num == -1 || stringList.size() < num)
+                {
+                    std::wstring part_of_string(arr + 0, arr_len);
+                    stringList.push_back(part_of_string);
+                    if (do_replace)
+                    {
+                        auto p1 = replaceSubstring(text, i, j, replace);
+                        delete [] text;
+                        text = p1;
+                        i += replace_len-1;
+                        length = wcslen(text);
+                    }
+                }
+                else
+                {
+                    delete[] arr;
+                    return ;
+                }
+            }
+        }
+        now_node = root;
+    }
+    delete[] arr;
+}
+
 
 sensitive_word_node** create_children(p_sensitive_word_node& node, int size)
 {

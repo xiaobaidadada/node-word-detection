@@ -13,7 +13,7 @@ wchar_t* ConvertNapiStringToWchar(const Napi::String& napiString) {
     return new_wstr(wstr); // wideString周期接收就会变成空
 }
 
-void add_word(const Napi::CallbackInfo &info) {
+void node_add_word(const Napi::CallbackInfo &info) {
     // 全局对象
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
@@ -23,7 +23,7 @@ void add_word(const Napi::CallbackInfo &info) {
     delete [] str;
 }
 
-Napi::Boolean check_word(const Napi::CallbackInfo &info) {
+Napi::Boolean node_check_word(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
     Napi::String word = info[0].As<Napi::String>();
@@ -32,7 +32,7 @@ Napi::Boolean check_word(const Napi::CallbackInfo &info) {
     delete [] str;
     return Napi::Boolean::New(env, r);
 }
-Napi::Object check_word_replace(const Napi::CallbackInfo &info) {
+Napi::Object node_check_word_replace(const Napi::CallbackInfo &info) {
         Napi::Env env = info.Env();
         Napi::HandleScope scope(env);
         if (info.Length() != 2 || !info[1].IsString())
@@ -51,6 +51,57 @@ Napi::Object check_word_replace(const Napi::CallbackInfo &info) {
         delete [] replace_str;
         return o;
 }
+
+Napi::Array node_find_word(const Napi::CallbackInfo &info) {
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+    if (info.Length() != 2 || !info[1].IsNumber())
+    {
+        Napi::TypeError::New(env, "Please check Params").ThrowAsJavaScriptException();
+    }
+    Napi::String word = info[0].As<Napi::String>();
+    Napi::Number num = info[1].As<Napi::Number>();
+    auto str = ConvertNapiStringToWchar(word);
+    std::vector<std::wstring>  stringList;
+    find_word(str,num.Int32Value(),stringList);
+    // 创建一个 JavaScript 数组
+    Napi::Array jsArray = Napi::Array::New(env, stringList.size());
+    for (size_t i = 0; i < stringList.size(); ++i) {
+        std::wstring wstr = stringList[i];
+        std::string str(wstr.begin(), wstr.end());
+        jsArray[i] = Napi::String::New(env, str);
+    }
+    delete [] str;
+    return jsArray;
+}
+Napi::Object node_find_word_replace(const Napi::CallbackInfo &info) {
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+    if (info.Length() != 3 )
+    {
+        Napi::TypeError::New(env, "Please check Params").ThrowAsJavaScriptException();
+    }
+    Napi::String word = info[0].As<Napi::String>();
+    Napi::Number num = info[1].As<Napi::Number>();
+    Napi::String replace = info[2].As<Napi::String>();
+    auto str = ConvertNapiStringToWchar(word);
+    auto replace_str = ConvertNapiStringToWchar(replace);
+    std::vector<std::wstring>  stringList;
+    find_word(str,num.Int32Value(),stringList,replace_str);
+    Napi::Object o = Napi::Object::New(env);
+    // 创建一个 JavaScript 数组
+    Napi::Array jsArray = Napi::Array::New(env, stringList.size());
+    for (size_t i = 0; i < stringList.size(); ++i) {
+        std::wstring wstr = stringList[i];
+        std::string str(wstr.begin(), wstr.end());
+        jsArray[i] = Napi::String::New(env, str);
+    }
+    o.Set("word_list", jsArray);
+    o.Set("str", Napi::String::New(env, wcharToString(str)));
+    delete [] str;
+    delete [] replace_str;
+    return o;
+}
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     // 初始化根节点
     root = (p_sensitive_word_node) malloc(sizeof (sensitive_word_node));
@@ -58,11 +109,15 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
     root->children_num = 0;
     // 设置函数
     exports.Set(Napi::String::New(env, "add_word"),
-                Napi::Function::New(env, add_word));
+                Napi::Function::New(env, node_add_word));
     exports.Set(Napi::String::New(env, "check_word"),
-                Napi::Function::New(env, check_word));
+                Napi::Function::New(env, node_check_word));
     exports.Set(Napi::String::New(env, "check_word_replace"),
-                    Napi::Function::New(env, check_word_replace));
+                    Napi::Function::New(env, node_check_word_replace));
+    exports.Set(Napi::String::New(env, "find_word"),
+                    Napi::Function::New(env, node_find_word));
+    exports.Set(Napi::String::New(env, "find_word_replace"),
+                    Napi::Function::New(env, node_find_word_replace));
     return exports;
 }
 
