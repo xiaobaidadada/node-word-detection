@@ -6,7 +6,6 @@ A very memory-efficient lightweight tool for forbidden word detection.
 `npm install node-word-detection`
 # Example
 ```js
-const {node_word_detection} = require("node-word-detection");
 node_word_detection.add_word("单词1");
 node_word_detection.add_word("word2");
 node_word_detection.add_word("test");
@@ -16,6 +15,10 @@ console.log(node_word_detection.check_word("4s3142"));
 // print false
 console.log(node_word_detection.check_word_replace("4s3单词1dac142test","***"));
 // print { have: true, str: '4s3***1dac142***' }
+console.log(node_word_detection.find_word("4s3单词1dac142test",-1));
+// print [ '单词1', 'test' ]
+console.log(node_word_detection.find_word_replace("4s3单词1dac142test",-1,"***")); // 性能不怎么好
+// print { word_list: [ '单词1', 'test' ], str: '4s3***dac142***' }
 ```
 
 # 说明
