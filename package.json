@@ -1,6 +1,6 @@
 {
   "name": "node-word-detection",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "sensitive word detection 敏感词(违禁词)检测与替换",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
@@ -9,17 +9,28 @@
     "url": "git@github.com:xiaobaidadada/node-word-detection.git"
   },
   "scripts": {
-    "install": "prebuild-install --verbose || node-gyp rebuild --release ",
+    "install": "prebuild-install --verbose || npm run build",
+    "build": "npm i node-addon-api@7.0.0 --save-dev && node-gyp-build",
     "cc-rebuild": " node-gyp rebuild",
     "cc-configure": "node-gyp configure",
-    "go": "node-gyp configure build --debug "
+    "go": "node-gyp configure build --debug ",
+    "prebuildify": "prebuildify --napi"
   },
-  "keywords": ["sensitive","word","敏感词","filter","sensitive word","字典查找","违禁词"],
+  "keywords": [
+    "sensitive",
+    "word",
+    "敏感词",
+    "filter",
+    "sensitive word",
+    "字典查找",
+    "违禁词"
+  ],
   "author": "xiaobaidadada",
   "license": "Apache-2.0",
   "dependencies": {
-    "prebuild-install": "^7.1.2",
-    "bindings": "^1.5.0"
+    "bindings": "^1.5.0",
+    "node-gyp-build": "^4.2.3",
+    "prebuild-install": "^7.1.2"
   },
   "files": [
     "binding.gyp",
@@ -28,7 +39,7 @@
   ],
   "devDependencies": {
     "node-addon-api": "^7.0.0",
-    "node-gyp": "^10.2.0",
-    "prebuild": "^13.0.1"
+    "prebuild": "^13.0.1",
+    "prebuildify": "5.0.0"
   }
 }
