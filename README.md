@@ -6,6 +6,7 @@ A very memory-efficient lightweight tool for forbidden word detection.
 `npm install node-word-detection`
 # Example
 ```js
+const {node_word_detection} = require("node-word-detection");
 node_word_detection.add_word("单词1");
 node_word_detection.add_word("word2");
 node_word_detection.add_word("test");
