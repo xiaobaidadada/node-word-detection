@@ -1,6 +1,6 @@
 {
   "name": "node-word-detection",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "sensitive word detection 敏感词(违禁词)检测与替换",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
@@ -9,7 +9,7 @@
     "url": "git@github.com:xiaobaidadada/node-word-detection.git"
   },
   "scripts": {
-    "install": "prebuild-install --verbose || npm run build",
+    "install": "npm run build || prebuild-install --verbose",
     "build": "node-gyp-build",
     "cc-rebuild": " node-gyp rebuild",
     "cc-configure": "node-gyp configure",
