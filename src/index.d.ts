@@ -44,7 +44,7 @@ export interface node_word_detection {
      * @param num -1是查找全部
      * @param replace_str
      */
-    find_word_replace(text: string, num: number,replace_str: string): {list:string[] ,str:string};
+    find_word_replace(text: string, num: number, replace_str: string): { list: string[], str: string };
 
     /**
      * get total word num
@@ -55,7 +55,8 @@ export interface node_word_detection {
     /**
      *  使用系统自带的违禁词添加到词库
      */
-    use_sys_sensitive_word():void;
+    use_sys_sensitive_word(): void;
 }
 
 export declare const node_word_detection: node_word_detection;
+export declare const get_instance: () => node_word_detection;
