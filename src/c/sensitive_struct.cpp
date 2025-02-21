@@ -98,7 +98,7 @@ void add_sensitive_word(p_sensitive_word_node& root, const wchar_t* text, int & 
             is_new = 1;
         }
     }
-    if (is_new == 1)
+    if (is_new == 1 || now_node->end == false)
     {
         // 一个新单词 
         word_num++;
