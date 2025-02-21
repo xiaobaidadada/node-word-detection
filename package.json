@@ -1,6 +1,6 @@
 {
   "name": "node-word-detection",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "sensitive word detection 敏感词(违禁词)检测与替换",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
