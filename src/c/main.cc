@@ -177,6 +177,6 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     NodeWordDetection::Init(env, exports);
     return exports;
 }
-NODE_API_MODULE(node-word-detection, Init)
+NODE_API_MODULE(node_word_detection, Init)
 
 // NODE_API_ADDON(NodeWordDetection) // node 16会报错
