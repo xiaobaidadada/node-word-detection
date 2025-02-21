@@ -64,7 +64,7 @@ void remove_hash_map_word(p_sensitive_word_node& node, p_sensitive_word_node chi
 }
 
 // 插入违禁词的节点
-void add_sensitive_word(p_sensitive_word_node& root, const wchar_t* text, int & max_txt_len)
+void add_sensitive_word(p_sensitive_word_node& root, const wchar_t* text, int & max_txt_len,long & word_num)
 {
     size_t length = wcslen(text);
     if (length > max_txt_len)
@@ -72,7 +72,8 @@ void add_sensitive_word(p_sensitive_word_node& root, const wchar_t* text, int & 
         max_txt_len = length;
     }
     p_sensitive_word_node now_node = root;
-    for (int i = 0; i < length; ++i)
+    int i = 0;
+    for (; i < length; ++i)
     {
         wchar_t ch = text[i];
         // if (std::iswspace(ch))
@@ -94,7 +95,13 @@ void add_sensitive_word(p_sensitive_word_node& root, const wchar_t* text, int & 
             p_node->char_word = ch;
             p_node->end = false;
             now_node = p_node;
+            
         }
+    }
+    if (i == length)
+    {
+        // 一个新单词 
+        word_num++;
     }
     now_node->end = true;
 }

@@ -53,8 +53,7 @@ private:
         // Napi::String word = info[0].As<Napi::String>();
         const std::wstring word(to_wstring(info[0].As<Napi::String>()));
         auto str = word.c_str();
-        add_sensitive_word(root,str,max_txt_len);
-        word_num ++;
+        add_sensitive_word(root,str,max_txt_len,word_num);
         // delete [] str;
     }
 

@@ -6,3 +6,4 @@ node_word_detection.add_word("测试啊");
 // node_word_detection.add_word("测试啊");
 console.log(node_word_detection.check_word("测试啊"));
 console.log(node_word_detection.get_word_num())
+
