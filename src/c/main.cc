@@ -16,63 +16,31 @@ wchar_t* ConvertNapiStringToWchar(const Napi::String& napiString)
 }
 
 
-//
-// Napi::Object Init(Napi::Env env, Napi::Object exports)
-// {
-//     // 初始化根节点
-//     root = (p_sensitive_word_node)malloc(sizeof(sensitive_word_node));
-//     create_children(root,first_children_length);
-//     root->children_num = 0;
-//     // 设置函数
-//     exports.Set(Napi::String::New(env, "add_word"),
-//                 Napi::Function::New(env, node_add_word));
-//     exports.Set(Napi::String::New(env, "check_word"),
-//                 Napi::Function::New(env, node_check_word));
-//     exports.Set(Napi::String::New(env, "check_word_replace"),
-//                 Napi::Function::New(env, node_check_word_replace));
-//     exports.Set(Napi::String::New(env, "find_word"),
-//                 Napi::Function::New(env, node_find_word));
-//     exports.Set(Napi::String::New(env, "find_word_replace"),
-//                 Napi::Function::New(env, node_find_word_replace));
-//     return exports;
-// }
-
-class NodeWordDetection : public Napi::Addon<NodeWordDetection>
-{
+class NodeWordDetection : public Napi::ObjectWrap<NodeWordDetection> {
 public:
-    NodeWordDetection(Napi::Env env, Napi::Object exports)
-    {
-        
+    NodeWordDetection(const Napi::CallbackInfo& info) : Napi::ObjectWrap<NodeWordDetection>(info) {
         root = (p_sensitive_word_node)malloc(sizeof(sensitive_word_node));
         create_children(root,first_children_length);
         root->children_num = 0;
-        // In the constructor we declare the functions the add-on makes available
-        // to JavaScript.
-        DefineAddon(exports, {
-            InstanceMethod("add_word", &NodeWordDetection::node_add_word),
-            InstanceMethod("check_word", &NodeWordDetection::node_check_word),
-            InstanceMethod("check_word_replace", &NodeWordDetection::node_check_word_replace),
-            InstanceMethod("find_word", &NodeWordDetection::node_find_word),
-            InstanceMethod("find_word_replace", &NodeWordDetection::node_find_word_replace),
-            InstanceMethod("remove_word", &NodeWordDetection::node_remove_word),
-            InstanceMethod("get_word_num", &NodeWordDetection::get_word_num),
-                        // We can also attach plain objects to `exports`, and instance methods as
-                        // properties of those sub-objects.
-                        // InstanceValue("subObject", DefineProperties(Napi::Object::New(env), {
-                        //   InstanceMethod("decrement", &NodeWordDetection::Decrement)
-                        // }), napi_enumerable)
-                    });
     }
 
-private:
-    // This method has access to the data stored in the environment because it is
-    // an instance method of `ExampleAddon` and because it was listed among the
-    // property descriptors passed to `DefineAddon()` in the constructor.
-    // Napi::Value Increment(const Napi::CallbackInfo& info) {
-    //     return Napi::Number::New(info.Env(), ++value);
-    // }
+    static Napi::Object Init(Napi::Env env, Napi::Object exports) {
+        Napi::Function func = DefineClass(env, "NodeWordDetection", {
+            InstanceMethod("add_word", &NodeWordDetection::node_add_word),
+              InstanceMethod("check_word", &NodeWordDetection::node_check_word),
+              InstanceMethod("check_word_replace", &NodeWordDetection::node_check_word_replace),
+              InstanceMethod("find_word", &NodeWordDetection::node_find_word),
+              InstanceMethod("find_word_replace", &NodeWordDetection::node_find_word_replace),
+              InstanceMethod("remove_word", &NodeWordDetection::node_remove_word),
+              InstanceMethod("get_word_num", &NodeWordDetection::get_word_num),
+        });
+        exports.Set("NodeWordDetection", func);
+        return exports;
+    }
 
- 
+    
+private:
+    
     Napi::Value get_word_num(const Napi::CallbackInfo& info) {
         return Napi::Number::New(info.Env(), word_num);
     }
@@ -199,8 +167,16 @@ private:
     long word_num = 0;
     // 最长词字数 也是树的最深深度 只做计算单位使用 如果删除单词这个变量目前将会变得不准确
     int max_txt_len = 0;
-    
 };
 
-// NODE_API_MODULE(node-word-detection, Init)
-NODE_API_ADDON(NodeWordDetection)
+
+
+Napi::Object Init(Napi::Env env, Napi::Object exports)
+{
+    // 设置函数
+    NodeWordDetection::Init(env, exports);
+    return exports;
+}
+NODE_API_MODULE(node-word-detection, Init)
+
+// NODE_API_ADDON(NodeWordDetection) // node 16会报错

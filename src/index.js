@@ -4,4 +4,6 @@ var binding = require('node-gyp-build')(path.join(__dirname,'..')) // 自动找�
 
 
 
-module.exports.node_word_detection = binding;
+module.exports.node_word_detection = new binding.NodeWordDetection();
+
+module.exports.get_instance = function() { return new binding.NodeWordDetection() ;}
