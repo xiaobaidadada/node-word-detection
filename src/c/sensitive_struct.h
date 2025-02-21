@@ -20,14 +20,25 @@ typedef struct sensitive_word_node
     //    struct sensitive_word_node *left, *right, *parent; // 用于红黑树实现 hash冲突
 } sensitive_word_node, *p_sensitive_word_node;
 
+typedef struct sensitive_word_node_father
+{
+    p_sensitive_word_node node; // 当前节点
+    p_sensitive_word_node father; // 节点的父节点
+} sensitive_word_node_father;
+
 // 添加敏感词
-void add_sensitive_word(const wchar_t* text);
+void add_sensitive_word(p_sensitive_word_node& root, const wchar_t* text, int & max_txt_len);
+
+// 删除敏感词
+bool remove_sensitive_word(p_sensitive_word_node& root, const wchar_t* text);
 
 // 检测并替换违禁词
-bool check_sensitive_word(wchar_t* & text, bool do_replace = false, const wchar_t* replace = L"***");
+bool check_sensitive_word(p_sensitive_word_node& root,  wchar_t* & text, bool do_replace = false,
+                          const wchar_t* replace = L"***");
 
 // 查找并替换违禁词
-void find_word(wchar_t* & text, int num, std::vector<std::wstring> & stringList,bool do_replace = false, const wchar_t* replace = L"***");
+void find_word(p_sensitive_word_node& root, wchar_t* & text, int num, std::vector<std::wstring>& stringList,
+               int & max_txt_len,bool do_replace = false,  const wchar_t* replace = L"***");
 
 // 创建子节点
 sensitive_word_node** create_children(p_sensitive_word_node& node, int size = default_children_length);

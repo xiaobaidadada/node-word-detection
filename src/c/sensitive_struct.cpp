@@ -3,11 +3,11 @@
 #include "sensitive_struct.h"
 
 // 违禁词数量
-long word_num = 0;
+// long word_num = 0;
 // 最长词字数 也是树的最深深度
-int max_txt = 0;
+// int max_txt = 0;
 
-p_sensitive_word_node root;
+// p_sensitive_word_node root;
 
 
 sensitive_word_node* get_hash_map_word(sensitive_word_node** children, wchar_t key, int size)
@@ -50,30 +50,42 @@ void put_hash_map_word(p_sensitive_word_node& node, wchar_t key, p_sensitive_wor
     }
 }
 
+// 只是移除但是并不删除元素（不做数组收缩)
+void remove_hash_map_word(p_sensitive_word_node& node, p_sensitive_word_node children_node)
+{
+    if (node->children == NULL)return;
+    unsigned int index = hash(children_node->char_word, node->children_len);
+    auto it = node->children[index];
+    if (it != NULL)
+    {
+        delete it;
+        node->children[index] = NULL;
+    }
+}
+
 // 插入违禁词的节点
-void add_sensitive_word(const wchar_t* text)
+void add_sensitive_word(p_sensitive_word_node& root, const wchar_t* text, int & max_txt_len)
 {
     size_t length = wcslen(text);
-    if (length > max_txt)
+    if (length > max_txt_len)
     {
-        max_txt = length;
+        max_txt_len = length;
     }
     p_sensitive_word_node now_node = root;
     for (int i = 0; i < length; ++i)
     {
         wchar_t ch = text[i];
-        if (std::iswspace(ch))
-        {
-            continue;
-        }
+        // if (std::iswspace(ch))
+        // {
+        //     continue;
+        // }
         auto it = get_hash_map_word(now_node->children, ch, i == 0 ? now_node->children_len : default_children_length);
         if (it != NULL)
         {
-            now_node = (p_sensitive_word_node)it;
+            now_node = it;
         }
         else
         {
-            word_num++;
             p_sensitive_word_node p_node = (p_sensitive_word_node)malloc(sizeof(sensitive_word_node));
             p_node->children_len = first_children_length;
             p_node->children_num = 1;
@@ -87,7 +99,44 @@ void add_sensitive_word(const wchar_t* text)
     now_node->end = true;
 }
 
-bool check_sensitive_word(wchar_t* & text, bool do_replace, const wchar_t* replace)
+bool remove_sensitive_word(p_sensitive_word_node& root, const wchar_t* text)
+{
+    size_t length = wcslen(text);
+    p_sensitive_word_node now_node = root;
+    std::vector<sensitive_word_node_father> list;
+    for (int i = 0; i < length; ++i)
+    {
+        wchar_t ch = text[i];
+        // if (std::iswspace(ch))
+        // {
+        //     continue;
+        // }
+        auto it = get_hash_map_word(now_node->children, ch, now_node->children_len);
+        if (it != NULL)
+        {
+            sensitive_word_node_father n;
+            n.node = it;
+            n.father = now_node;
+            list.push_back(n);
+            now_node = it;
+        }
+        else if (i != length - 1)
+        {
+            // 有一个匹配不上就失败
+            return false;
+        }
+    }
+    // 每个都匹配上了
+    for (int i = list.size() - 1; i >= 0; --i)
+    {
+        auto it = list[i];
+        if (it.node == NULL);
+        remove_hash_map_word(it.father, it.node);
+    }
+    return true;
+}
+
+bool check_sensitive_word(p_sensitive_word_node& root,  wchar_t* & text, bool do_replace, const wchar_t* replace)
 {
     size_t length = wcslen(text);
     size_t replace_len = wcslen(replace);
@@ -96,10 +145,10 @@ bool check_sensitive_word(wchar_t* & text, bool do_replace, const wchar_t* repla
     for (int i = 0; i < length; ++i)
     {
         wchar_t ch = text[i];
-        if (std::iswspace(ch))
-        {
-            continue;
-        }
+        // if (std::iswspace(ch))
+        // {
+        //     continue;
+        // }
         auto it = get_hash_map_word(now_node->children, ch, now_node->children_len);
         if (it == NULL)
         {
@@ -138,7 +187,7 @@ bool check_sensitive_word(wchar_t* & text, bool do_replace, const wchar_t* repla
                     auto p1 = replaceSubstring(text, i, j, replace);
                     delete [] text;
                     text = p1;
-                    i += replace_len-1;
+                    i += replace_len - 1;
                     length = wcslen(text);
                     r = true;
                 }
@@ -153,13 +202,14 @@ bool check_sensitive_word(wchar_t* & text, bool do_replace, const wchar_t* repla
     return r;
 }
 
-void find_word(wchar_t* & text, int num, std::vector<std::wstring> & stringList ,bool do_replace , const wchar_t* replace)
+void find_word(p_sensitive_word_node& root,  wchar_t* & text, int num, std::vector<std::wstring>& stringList,
+               int & max_txt_len, bool do_replace, const wchar_t* replace)
 {
     size_t length = wcslen(text);
     size_t replace_len = wcslen(replace);
     p_sensitive_word_node now_node = root;
-    wchar_t* arr = new wchar_t[max_txt+1];  // 动态分配内存
-//     wchar_t arr[max_txt];
+    wchar_t* arr = new wchar_t[max_txt_len + 1]; // 动态分配内存
+    //     wchar_t arr[max_txt];
     int arr_len = 0;
     for (int i = 0; i < length; ++i)
     {
@@ -168,10 +218,10 @@ void find_word(wchar_t* & text, int num, std::vector<std::wstring> & stringList 
         arr[arr_len] = ch;
         arr_len++;
         // std::wstring result = std::wstring(1, ch); 
-        if (std::iswspace(ch))
-        {
-            continue;
-        }
+        // if (std::iswspace(ch))
+        // {
+        //     continue;
+        // }
         auto it = get_hash_map_word(now_node->children, ch, now_node->children_len);
         if (it == NULL)
         {
@@ -195,7 +245,7 @@ void find_word(wchar_t* & text, int num, std::vector<std::wstring> & stringList 
             else
             {
                 delete[] arr;
-                return ;
+                return;
             }
         }
         for (int j = i + 1; j < length; j++)
@@ -220,14 +270,14 @@ void find_word(wchar_t* & text, int num, std::vector<std::wstring> & stringList 
                         auto p1 = replaceSubstring(text, i, j, replace);
                         delete [] text;
                         text = p1;
-                        i += replace_len-1;
+                        i += replace_len - 1;
                         length = wcslen(text);
                     }
                 }
                 else
                 {
                     delete[] arr;
-                    return ;
+                    return;
                 }
             }
         }

@@ -13,6 +13,13 @@ export interface node_word_detection {
     add_word: (word: string) => void;
 
     /**
+     *  remove a word
+     *  删除一个单词
+     * @param word
+     */
+    remove_word: (word: string) => void;
+
+    /**
      * checks whether a word in a sentence functions
      * 检查这个句子中是否有 某个单词 敏感词
      * @param text
@@ -38,6 +45,12 @@ export interface node_word_detection {
      * @param replace_str
      */
     find_word_replace(text: string, num: number,replace_str: string): {list:string[] ,str:string};
+
+    /**
+     * get total word num
+     * @param text
+     */
+    get_word_num(text: string): number;
 }
 
 export declare const node_word_detection: node_word_detection;
