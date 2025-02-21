@@ -72,7 +72,7 @@ void add_sensitive_word(p_sensitive_word_node& root, const wchar_t* text, int & 
         max_txt_len = length;
     }
     p_sensitive_word_node now_node = root;
-    int i = 0;
+    int i = 0 , is_new = 0;
     for (; i < length; ++i)
     {
         wchar_t ch = text[i];
@@ -95,10 +95,10 @@ void add_sensitive_word(p_sensitive_word_node& root, const wchar_t* text, int & 
             p_node->char_word = ch;
             p_node->end = false;
             now_node = p_node;
-            
+            is_new = 1;
         }
     }
-    if (i == length)
+    if (is_new == 1)
     {
         // 一个新单词 
         word_num++;
