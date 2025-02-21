@@ -27,7 +27,7 @@ typedef struct sensitive_word_node_father
 } sensitive_word_node_father;
 
 // 添加敏感词
-void add_sensitive_word(p_sensitive_word_node& root, const wchar_t* text, int & max_txt_len);
+void add_sensitive_word(p_sensitive_word_node& root, const wchar_t* text, int & max_txt_len , long & word_num);
 
 // 删除敏感词
 bool remove_sensitive_word(p_sensitive_word_node& root, const wchar_t* text);

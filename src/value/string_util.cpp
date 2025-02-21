@@ -56,7 +56,7 @@ std::string wcharToString(const wchar_t* wstr) {
 
 std::string wstring_to_string(const std::wstring &wide_string)
 {
-    return wstring_to_string(wide_string);
+    return wcharToString(wide_string.c_str());
 }
 // std::string wstring_to_string(const std::wstring &wide_string) {
 //     // 这段代码来自于微软的node-pty 无法通用

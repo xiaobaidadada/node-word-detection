@@ -51,6 +51,11 @@ export interface node_word_detection {
      * @param text
      */
     get_word_num(text: string): number;
+
+    /**
+     *  使用系统自带的违禁词添加到词库
+     */
+    use_sys_sensitive_word():void;
 }
 
 export declare const node_word_detection: node_word_detection;
