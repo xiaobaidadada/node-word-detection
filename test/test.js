@@ -1,4 +1,7 @@
-const node_word_detection= require("../build/Debug/node-word-detection");
+let node_word_detection= require("../build/Debug/node-word-detection");
+node_word_detection = new node_word_detection.NodeWordDetection();
+// console.log(node_word_detection);
+// return;
 require("../build/Debug/node-word-detection");
 node_word_detection.add_word("单词1");
 node_word_detection.add_word("word2");
