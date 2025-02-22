@@ -10,9 +10,9 @@
 
 typedef struct sensitive_word_node
 {
-    bool end;
-    int children_len; // children的数量 如果超过255就不管了
-    int children_num; // children 中元素的数量
+    bool end ;
+    unsigned short  children_len; // children的数量 这个类型最大容纳 65535 
+    unsigned short  children_num; // children 中元素的数量
     wchar_t char_word;
     sensitive_word_node* next; // 用于链表实现 处理哈希冲突 考虑到一个词后面跟着的句子可能不会特别多，所以使用链表效率也足够了。空间使用最小
     //    unsigned char *depth; // 深度不可能特别长 0-255 （单词最长) 包含 多个深度，某个单词可能处于多个深度中，使用第一个表达当前含有的长度 依然使用hash 来判断
