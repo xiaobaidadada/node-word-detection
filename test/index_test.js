@@ -13,7 +13,13 @@ function abc(){
     // abc.add_word("123");
     // console.log(abc.check_word("1234"))
 
-    node_word_detection.add_word("刁远萍")
-    console.log(node_word_detection.check_word("刁远萍"));
+    node_word_detection.add_word("测试一下");
+    node_word_detection.add_word("测试一下1");
+    node_word_detection.add_word("测试一下12");
+    node_word_detection.add_word("测试一下13");
+    node_word_detection.add_word("测试一下1479");
+    node_word_detection.add_word("测试一下15");
+    node_word_detection.remove_word("测试一下12");
+    console.log(node_word_detection.check_word("测试一下12"));
 }
 abc()
