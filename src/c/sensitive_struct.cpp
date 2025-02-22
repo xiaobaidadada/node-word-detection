@@ -2,6 +2,8 @@
 #include <cwctype>
 #include "sensitive_struct.h"
 
+#include <complex.h>
+
 // 违禁词数量
 // long word_num = 0;
 // 最长词字数 也是树的最深深度
@@ -63,16 +65,54 @@ void put_hash_map_word(p_sensitive_word_node& node, wchar_t key, p_sensitive_wor
     }
 }
 
-// 只是移除但是并不删除元素（不做数组收缩)
+// 只是移除但是（不做数组收缩)
 void remove_hash_map_word(p_sensitive_word_node& node, p_sensitive_word_node children_node)
 {
-    if (node->children == NULL)return;
     unsigned int index = hash(children_node->char_word, node->children_len);
-    auto it = node->children[index];
+    p_sensitive_word_node it = node->children[index];
     if (it != NULL)
     {
-        delete it;
-        node->children[index] = NULL;
+        if(node->children[index] == children_node)
+        {
+            // 某个数组的第一个元素就是
+            if (children_node->children !=NULL)
+            {
+                // 这个元素有子数组需要被删除
+                delete [] children_node->children;
+            }
+            if(children_node->next)
+            {
+                // 是链表的头
+                node->children[index] = children_node->next;
+            } else
+            {
+                node->children[index] = NULL; // 直接删除该位置上的元素
+            }
+            delete children_node;
+            node->children_num --;
+            return;
+        }
+        auto entry = it;
+        while (entry)
+        {
+            if (entry == children_node)
+            {
+                it->next = entry->next; // 这一步肯定会发生不然就有数据错误
+                break;
+            } else if(entry->next == NULL)
+            {
+                return;
+            }
+            it = entry;
+            entry = entry->next;
+        }
+        // 开始删除 
+        if (children_node->children !=NULL)
+        {
+            delete [] children_node->children;
+        }
+        delete children_node;
+        node->children_num --;
     }
 }
 
@@ -122,6 +162,10 @@ bool remove_sensitive_word(p_sensitive_word_node& root, const wchar_t* text)
 {
     size_t length = wcslen(text);
     p_sensitive_word_node now_node = root;
+    sensitive_word_node_father now_node_fater;
+    now_node_fater.father = root;
+    now_node_fater.node = root;
+    
     std::vector<sensitive_word_node_father> list;
     for (int i = 0; i < length; ++i)
     {
@@ -136,8 +180,12 @@ bool remove_sensitive_word(p_sensitive_word_node& root, const wchar_t* text)
             sensitive_word_node_father n;
             n.node = it;
             n.father = now_node;
+            now_node_fater.father = now_node;
+            now_node_fater.node = it;
+            
             list.push_back(n);
             now_node = it;
+            
         }
         else if (i != length - 1)
         {
@@ -145,12 +193,28 @@ bool remove_sensitive_word(p_sensitive_word_node& root, const wchar_t* text)
             return false;
         }
     }
-    // 每个都匹配上了
-    for (int i = list.size() - 1; i >= 0; --i)
+    // 最后一个节点 不是单词结尾
+    if(now_node->end == false)
+    {
+        return false;
+    }
+    // 最后一个节点 是单词结尾 但是还有子节点
+    if(now_node->end == true && now_node->children_num != 0)
+    {
+        now_node->end = false;
+        return true;
+    }
+    // 最后一个节点 是单词结尾 没有子节点 从后往前删
+    remove_hash_map_word(now_node_fater.father, now_node_fater.node); // 从父节点中删除当前节点 
+    for (int i = list.size() - 2; i >= 0; --i)
     {
         auto it = list[i];
-        if (it.node == NULL);
-        remove_hash_map_word(it.father, it.node);
+        if (it.node->end || it.node->children_num > 1)
+        {
+            // 节点也是一个根接节点 或者不止一个值 不需要再删除了
+            return true;
+        };
+        remove_hash_map_word(it.father, it.node); // 从父节点中删除当前节点 
     }
     return true;
 }
