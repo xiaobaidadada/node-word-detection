@@ -37,16 +37,29 @@ void put_hash_map_word(p_sensitive_word_node& node, wchar_t key, p_sensitive_wor
         create_children(node, size);
     }
     unsigned int index = hash(key, size);
-    sensitive_word_node* newEntry = p_node;
-    newEntry->char_word = key;
-    newEntry->next = node->children[index];
-    node->children[index] = newEntry;
-    // 扩容判断
-    auto add_v = p_node->children_num + 1;
-    p_node->children_num = add_v;
-    if (add_v > (p_node->children_len + 4))
+    // sensitive_word_node* newEntry = p_node;
+    p_node->char_word = key;
+    // 把头节点添加到自己，的下一个，自己成为头节点
+    p_node->next = node->children[index];
+    node->children[index] = p_node;
+    // 扩容判断 扩容的话 之前的链表都要作废重新整理链表，就算了吧
+    node->children_num = node->children_num + 1;
+    if (node->children_num > node->children_len ) // 固定扩容 条件 满了就扩容 
     {
-        resize_children(p_node, p_node->children_len, add_v);
+        int new_len = 0; // unsigned short 最大值 65535
+        if (node->children_len < 500)
+        {
+            new_len = node->children_len * 2;
+        }
+        else
+        {
+            new_len = node->children_len + 500;
+            if(new_len > 65535)
+            {
+                new_len = 65535;
+            }
+        }
+        resize_children(node, node->children_len, new_len); // 直接扩容一倍 
     }
 }
 
@@ -80,7 +93,7 @@ void add_sensitive_word(p_sensitive_word_node& root, const wchar_t* text, int & 
         // {
         //     continue;
         // }
-        auto it = get_hash_map_word(now_node->children, ch, i == 0 ? now_node->children_len : default_children_length);
+        auto it = get_hash_map_word(now_node->children, ch, now_node->children_len);
         if (it != NULL)
         {
             now_node = it;
@@ -88,11 +101,10 @@ void add_sensitive_word(p_sensitive_word_node& root, const wchar_t* text, int & 
         else
         {
             p_sensitive_word_node p_node = (p_sensitive_word_node)malloc(sizeof(sensitive_word_node));
-            p_node->children_len = first_children_length;
-            p_node->children_num = 1;
-            put_hash_map_word(now_node, ch, p_node, i == 0 ? first_children_length : default_children_length);
+            p_node->children_len = default_children_length;
+            p_node->children_num = 0;
+            put_hash_map_word(now_node, ch, p_node, now_node->children_len); 
             p_node->children = NULL;
-            p_node->char_word = ch;
             p_node->end = false;
             now_node = p_node;
             is_new = 1;
@@ -309,9 +321,35 @@ sensitive_word_node** resize_children(p_sensitive_word_node& node, int befor_siz
 {
     node->children = (sensitive_word_node**)realloc(node->children, sizeof(sensitive_word_node*) * new_size);
     node->children_len = new_size;
-    for (int i = befor_size; i < new_size; i++)
+  
+    // 旧的位置全部重新hash
+    auto list = (sensitive_word_node**)malloc(sizeof(sensitive_word_node*) * node->children_num);
+    short count = 0;
+    for (int i = 0; i < befor_size; i++) // 已有元素全部填进去
     {
+        sensitive_word_node* entry = node->children[i];
+        while (entry)
+        {
+            list[count] = entry;
+            entry = entry->next;
+            list[count]->next = NULL;
+            count++;
+        }
+    }
+    for (int i = 0; i < new_size; i++)
+    {
+        // 新的位置置空
         node->children[i] = NULL;
     }
+    // 重新添加
+    for (int i = 0; i < count; i++)
+    {
+        auto p_node = list[i];
+        unsigned int index = hash(p_node->char_word, new_size);
+        // 把头节点添加到自己，的下一个，自己成为头节点
+        p_node->next = node->children[index];
+        node->children[index] = p_node;
+    }
+    delete [] list;
     return node->children;
 }
