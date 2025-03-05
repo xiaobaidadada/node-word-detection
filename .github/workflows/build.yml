@@ -67,6 +67,7 @@ jobs:
   publish-npm:
     if: ${{ github.event.inputs.job == 'push-npm' || github.event.inputs.job == 'all' }}
     name: 发布到npm
+    needs: publish-npm-prebuild
     runs-on: ${{inputs.ubuntu_version}}
     steps:
       - uses: actions/checkout@v4
