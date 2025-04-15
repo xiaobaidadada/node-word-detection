@@ -75,17 +75,17 @@ jobs:
         with:
           node-version: 18
           registry-url: https://registry.npmjs.org
-      - name: Download Windows x64 artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: prebuilt-Windows
-          path: ${{ github.workspace }}/prebuilds
-
-      - name: Download Linux x64 artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: prebuilt-Linux
-          path: ${{ github.workspace }}/prebuilds
+#      - name: Download Windows x64 artifact
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: prebuilt-Windows
+#          path: ${{ github.workspace }}/prebuilds
+#
+#      - name: Download Linux x64 artifact
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: prebuilt-Linux
+#          path: ${{ github.workspace }}/prebuilds
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
