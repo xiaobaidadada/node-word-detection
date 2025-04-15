@@ -31,43 +31,43 @@ env:
 
 # 所有的jobs下的任务都会被执行
 jobs:
-  publish-npm-prebuild:
-    if: ${{ github.event.inputs.job == 'push-npm' || github.event.inputs.job == 'all' }}
-    name: 发布到npm的前的预构建
-    strategy:
-      matrix:
-        os: [ "${{inputs.ubuntu_version}}", "${{inputs.win_version}}" ]
-    steps:
-      - name: 拉去仓库代码
-        uses: actions/checkout@v4
-      - name: 安装node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - if: ${{ startsWith(matrix.os, 'windows') }}
-        run: pip.exe install setuptools
-      - if: ${{ startsWith(matrix.os, 'macos') }}
-        run: brew install python-setuptools
-      - if: ${{ !startsWith(matrix.os, 'windows') && !startsWith(matrix.os, 'macos') }}
-        run: python3 -m pip install setuptools
-      - if: ${{ startsWith(matrix.os, 'ubuntu') }}
-        run: |
-          sudo apt update
-          sudo apt install gcc-10 g++-10 -y
-          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10 --slave /usr/bin/gcov gcov /usr/bin/gcov-10
-      - name: 安装依赖
-        run: npm install --ignore-scripts
-      - name: 构建
-        run: npx prebuildify --napi
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: prebuilt-${{ runner.os }}  # 会覆盖之前的同名文件
-          path: prebuilds/
+#  publish-npm-prebuild:
+#    if: ${{ github.event.inputs.job == 'push-npm' || github.event.inputs.job == 'all' }}
+#    name: 发布到npm的前的预构建
+#    strategy:
+#      matrix:
+#        os: [ "${{inputs.ubuntu_version}}", "${{inputs.win_version}}" ]
+#    steps:
+#      - name: 拉去仓库代码
+#        uses: actions/checkout@v4
+#      - name: 安装node.js
+#        uses: actions/setup-node@v4
+#        with:
+#          node-version: 18
+#      - if: ${{ startsWith(matrix.os, 'windows') }}
+#        run: pip.exe install setuptools
+#      - if: ${{ startsWith(matrix.os, 'macos') }}
+#        run: brew install python-setuptools
+#      - if: ${{ !startsWith(matrix.os, 'windows') && !startsWith(matrix.os, 'macos') }}
+#        run: python3 -m pip install setuptools
+#      - if: ${{ startsWith(matrix.os, 'ubuntu') }}
+#        run: |
+#          sudo apt update
+#          sudo apt install gcc-10 g++-10 -y
+#          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10 --slave /usr/bin/gcov gcov /usr/bin/gcov-10
+#      - name: 安装依赖
+#        run: npm install --ignore-scripts
+#      - name: 构建
+#        run: npx prebuildify --napi
+#      - name: Upload artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: prebuilt-${{ runner.os }}  # 会覆盖之前的同名文件
+#          path: prebuilds/
   publish-npm:
     if: ${{ github.event.inputs.job == 'push-npm' || github.event.inputs.job == 'all' }}
     name: 发布到npm
-    needs: publish-npm-prebuild
+#    needs: publish-npm-prebuild
     runs-on: ${{inputs.ubuntu_version}}
     steps:
       - uses: actions/checkout@v4
