@@ -14,7 +14,7 @@ function use_sys_sensitive_word (){
     console.log('sys word reading is completed. ')
 }
 
-use_sys_sensitive_word.bind(binding.NodeWordDetection.prototype );
-binding.NodeWordDetection.prototype.use_sys_sensitive_word = use_sys_sensitive_word;
-module.exports.node_word_detection = new binding.NodeWordDetection();
-module.exports.get_instance = function() { return new binding.NodeWordDetection() ;}
+use_sys_sensitive_word.bind(node_word_detection.NodeWordDetection.prototype );
+node_word_detection.NodeWordDetection.prototype.use_sys_sensitive_word = use_sys_sensitive_word;
+module.exports.node_word_detection = new node_word_detection.NodeWordDetection();
+module.exports.get_instance = function() { return new node_word_detection.NodeWordDetection() ;}
